@@ -30,20 +30,15 @@ module A2bLogging
     end
 
     def call(severity, time, progname, msg)
-
-      if not msg.is_a?(Hash)
-        msg = { 'message' => String === msg ? msg : msg.inspect }
-      end
+      msg = { 'message' => msg.is_a?(String) ? msg : msg.inspect } unless msg.is_a?(Hash)
 
       msg['severity'] = severity if severity
       msg['progname'] = progname if progname
 
       tags = current_tags
 
-      if tags.any?
-        if not msg['type']
-          msg['type'] = tags.at(0)
-        end
+      if tags.size > 0
+        msg['type'] ||= tags.first
         msg['tags'] = tags
       end
 
