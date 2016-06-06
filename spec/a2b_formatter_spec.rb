@@ -71,39 +71,4 @@ RSpec.describe A2bLogging::Formatter, "A2BFormatter" do
       end
     end
   end
-
-
-  context "using tagged logging" do
-    strio = StringIO.new
-
-    # match rails logger setup
-    logger = ActiveSupport::Logger.new strio
-    logger = ActiveSupport::TaggedLogging.new(logger)
-    logger.formatter = A2bLogging::Formatter.new
-
-    logger.tagged("test_type") do
-      logger.tagged("test_tag") do
-        logger.info "foobar"
-      end
-    end
-
-    json = JSON.parse(strio.string)
-
-    it "uses the string as message" do
-      expect(json['message']).to eq "foobar"
-    end
-
-    it "has a correct timestamp" do
-      expect(Time.parse(json['@timestamp'])).to be_within(2).of Time.now
-    end
-
-    it "has the correct type" do
-      expect(json['type']).to eq "test_type"
-    end
-
-    it "has the correct tags" do
-      expect(json['tags']).to eq ["test_type","test_tag"]
-    end
-
-  end
 end
