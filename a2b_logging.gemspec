@@ -1,16 +1,14 @@
 # coding: utf-8
-lib = File.expand_path('../lib', __FILE__)
-$LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'a2b_logging/version'
-
 Gem::Specification.new do |spec|
   spec.name          = "a2b_logging"
-  spec.version       = A2bLogging::VERSION
+  spec.version       = "0.1.0"
   spec.authors       = ["Mathias Rüdiger"]
   spec.email         = ["mathias.ruediger@fromatob.com"]
 
   spec.summary       = "Tame Rails logs, add timestamps and make them useable"
-  spec.description   = "Tame Rails logs, add timestamps and make them useable"
+  spec.description   = "Tame Rails logs, add timestamps and make them useable. To be used with Logstash"
+
+  spec.licenses       = %w(MIT)
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
   # to allow pushing to a single host or delete this section to allow pushing to any host.
@@ -20,7 +18,8 @@ Gem::Specification.new do |spec|
     raise "RubyGems 2.0 or newer is required to protect against public gem pushes."
   end
 
-  spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
+  spec.files         = Dir["lib/a2b_logging.rb", "lib/a2b_logging/*", "Gemfile", "LICENSE", "Rakefile", "README.md"]
+  spec.homepage      = "http://www.fromatob.com"
   spec.bindir        = "exe"
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
@@ -28,7 +27,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 1.12"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "pry", "~> 0.10.3"
 
-  spec.add_runtime_dependency "activesupport", "~> 4.2.5.2"
+  spec.add_runtime_dependency "activesupport", "~> 4.2"
   spec.add_runtime_dependency "logstash-event", "1.2.02"
 end
