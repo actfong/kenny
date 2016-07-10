@@ -4,7 +4,7 @@ require 'active_support'
 
 module A2bLogging
   module Formatters
-    class Formatter < ::Logger::Formatter
+    class LogStashFormatter < ::Logger::Formatter
 
       include ActiveSupport::TaggedLogging::Formatter
 
