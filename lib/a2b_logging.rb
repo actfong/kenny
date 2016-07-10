@@ -22,6 +22,10 @@ module A2bLogging
     end  
   end
 
+  def self.unsubscribe_from_rails_defaults
+    A2bLogging::Unsubscriber.unsubscribe_all
+  end
+
   def self.define_log_subscriber_class(instr_config)
     klass = Class.new(ActiveSupport::LogSubscriber) do
       define_method( instr_config[:name].split(".")[0], instr_config[:block] )
@@ -35,9 +39,6 @@ module A2bLogging
     end
     klass.attach_to instr_config[:name].split(".")[1].to_sym
   end
-
-  def self.unsubscribe_from_rails_defaults
-    A2bLogging.Unsubscriber.unsubscribe_all
-  end
+  private_class_method :define_log_subscriber_class
 
 end
