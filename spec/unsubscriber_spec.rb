@@ -1,6 +1,6 @@
 require "spec_helper"
 
-describe A2bLogging::Unsubscribers::RailsDefaults do
+describe A2bLogging::Unsubscriber do
   let(:default_patterns){
     ActiveSupport::LogSubscriber.log_subscribers.map(&:patterns).flatten
   }
@@ -27,7 +27,9 @@ describe A2bLogging::Unsubscribers::RailsDefaults do
     context "No custom LogSubscribers attached" do
       it 'removes listeners_for default_patterns' do
         before_count = default_patterns_listeners.call.count
-        A2bLogging::Unsubscribers::RailsDefaults.unsubscribe_all
+
+        A2bLogging::Unsubscriber.unsubscribe_all
+
         after_count = default_patterns_listeners.call.count
 
         expect(before_count).not_to eq after_count
@@ -41,12 +43,11 @@ describe A2bLogging::Unsubscribers::RailsDefaults do
         before_count = default_patterns_listeners.call.count
 
         A2bLogging.attach_to_instrumentation
-        A2bLogging::Unsubscribers::RailsDefaults.unsubscribe_all
+        A2bLogging::Unsubscriber.unsubscribe_all
 
         after_count = default_patterns_listeners.call.count
 
         expect(before_count).not_to eq after_count
-        expect(after_count).to eq 2 
 
         ["process_action.action_controller", "logger.action_controller"].each do |instr|
           expect(

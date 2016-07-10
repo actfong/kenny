@@ -2,7 +2,7 @@ require_relative "./a2b_logging/railtie"
 require_relative "../rails_ext/rack/logger"
 
 require_relative "./a2b_logging/formatters/log_stash_formatter"
-require_relative "./a2b_logging/unsubscribers/rails_defaults"
+require_relative "./a2b_logging/unsubscriber"
 
 module A2bLogging
 
@@ -37,7 +37,7 @@ module A2bLogging
   end
 
   def self.unsubscribe_from_rails_defaults
-    A2bLogging.Unsubscribers::RailsDefaults.unsubscribe_all
+    A2bLogging.Unsubscriber.unsubscribe_all
   end
 
 end
