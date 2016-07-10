@@ -26,10 +26,12 @@ module A2bLogging
           DEFAULT_RAILS_LOG_SUBSCRIBER_CLASSES.include? subscriber.class
         end
       end
+      private_class_method :default_rails_log_subscribers
 
       def self.listeners_for(event, subscriber_namespace)
         ActiveSupport::Notifications.notifier.listeners_for("#{event}.#{subscriber_namespace}")
       end
+      private_class_method :listeners_for
 
       def self.unsubscribe_listeners_for_event(subscriber, event)
         subscriber_namespace = subscriber.class.send :namespace
@@ -39,13 +41,14 @@ module A2bLogging
           end
         end
       end
+      private_class_method :unsubscribe_listeners_for_event
 
       def self.subscribed_events_for(subscriber)
         error_msg = "Expected #{subscriber} to be inherited from ActiveSupport::LogSubscriber"
         raise error_msg if subscriber.class.superclass != ActiveSupport::LogSubscriber
         subscriber.public_methods(false).reject { |method| method.to_s == 'call' }
       end
-
+      private_class_method :subscribed_events_for
     end
   end
 end
