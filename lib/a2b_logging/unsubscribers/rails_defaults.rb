@@ -12,9 +12,11 @@ module A2bLogging
       ]
 
       def self.unsubscribe_all
-        default_rails_log_subscribers.each do |subscriber|
-          subscribed_events_for(subscriber).each do |event|
-            unsubscribe_listeners_for_event(subscriber, event)
+        if A2bLogging.application.config.a2b_logging[:unsubscribe_rails_defaults]        
+          default_rails_log_subscribers.each do |subscriber|
+            subscribed_events_for(subscriber).each do |event|
+              unsubscribe_listeners_for_event(subscriber, event)
+            end
           end
         end
       end

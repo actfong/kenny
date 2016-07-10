@@ -12,33 +12,13 @@ module A2bLogging
       # Define anonymous classes that inherit from ActiveSupport::LogSubscriber
       # Within that class, define methods that perform a user-define action when an instrumentation occurs
       # If desired, user can define a specific logger for the specified instrumentation
-      if app.config.a2b_logging[:instrumentations]
-        app.config.a2b_logging[:instrumentations].each do |instr_config|
-          define_log_subscriber_class(instr_config)
-        end
-      end
+      A2bLogging.application = app
+      A2bLogging.attach_to_instrumentation
     end
 
     config.after_initialize do |app|
       # Unsubscribe all default Rails LogSubscribers 
-      if app.config.a2b_logging[:unsubscribe_rails_defaults]
-        A2bLogging::Unsubscribers::RailsDefaults.unsubscribe_all
-      end
+      A2bLogging.unsubscribe_from_rails_defaults
     end
-
-    def define_log_subscriber_class(instr_config)
-      klass = Class.new(ActiveSupport::LogSubscriber) do
-        define_method( instr_config[:name].split(".")[0], instr_config[:block] )
-
-        if instr_config[:logger]
-          define_method(:logger, instr_config[:logger] )
-        else
-          define_method(:logger, lambda{Rails.logger})
-        end
-
-      end
-      klass.attach_to instr_config[:name].split(".")[1].to_sym
-    end
-
   end
 end
