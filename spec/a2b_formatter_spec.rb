@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'active_support'
 
-RSpec.describe A2bLogging::Formatter, "A2BFormatter" do
+RSpec.describe A2bLogging::Formatters::Formatter, "A2BFormatter" do
   describe "the json output" do
     subject { JSON.parse(strio.string) }
 
