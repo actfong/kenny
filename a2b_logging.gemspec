@@ -35,7 +35,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_development_dependency "pry", "~> 0.10.3"
 
-  spec.add_runtime_dependency 'actionpack', '>= 4', '< 5.1'
+  spec.add_runtime_dependency 'actionpack', '>= 4.2', '< 5.1'
+  spec.add_runtime_dependency 'activerecord', '>= 4.2', '< 5.1'
+  spec.add_runtime_dependency 'actionmailer', '>= 4.2', '< 5.1'
   spec.add_runtime_dependency "activesupport", "~> 4.2"
+  spec.add_runtime_dependency 'railties',      '>= 4.2', '< 5.1'
   spec.add_runtime_dependency "logstash-event", "1.2.02"
 end
