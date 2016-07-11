@@ -32,6 +32,8 @@ Or command line:
   A2bLogging can be configured through an initializer (`config/initializers/a2b_logging.rb`) or within the configuration file of your environment `development|test|staging|production.rb`. 
   This depends on whether you want to same or different behaviour accross environments.
 
+  Here is an example, its details will be explained in the following paragraphs.
+
   ```ruby
 MyApp::Application.configure do
   request_logger = ActiveSupport::Logger.new( File.join(Rails.root, "log", "process_action.log") )
@@ -59,30 +61,32 @@ end
 
   ```
 
-### Instrumentations Config
+### :instrumentations configuration
+  Before proceeding, please make sure you are familiar with the [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html)
+
   In the example above, we setup A2bLogging to monitor two instrumentation events, `process_action.action_controller` and `sql.active_record`.
 
   For every instrumentation that you want to monitor, you have to provide a `:name` and a `:block`. `:logger` is optional
 
-  Behind the scenes, it defines two anonymous classes, that inherit from ActiveSupport::LogSubscriber
+  Behind the scenes, it defines an anonymous class (< ActiveSupport::LogSubscriber), for each of the specified instrumentation.
 
   The first one gets method `def process_action` defined and `def logger` *redefined*.
 
   The body of `def process_action` is the `:block` that has been supplied to the configuration. 
-  Hence `:block` must be a lambda or a Proc. 
+  Hence `:block` must be a Lambda or a Proc. 
   (Lambda will raise errors with wrong number of arguments, Proc won't)
   
-  The `def logger` method gets overridden and will return the logger-instance that you have provided to the configuration. (in this case, its the `request_logger` that you have defined at the top of your config). 
+  The `def logger` method (in ActiveSupport::LogSubscriber) gets overridden and will return the logger-instance that you have provided to the configuration. (In this case, its the `request_logger` that you have defined at the top of your config). 
 
   This class is then attached to :action_controller
 
   The idea of redefining `def logger` may sound a bit scary, but this is necessary to keep events from 
   different instrumentation channels on different log files. If `:logger` option is not provided, then that LogSubscriber class will use the default Rails logger (and hence writing to your production.log etc)
 
-  The second LogSubscriber class has method `start_processing` defined and the method body is again what has been supplied in the :block configuration. 
+  The second LogSubscriber class will have method `def start_processing` defined and the method body is again what has been supplied in the :block configuration. 
 
   The difference is that `:logger` has not been provided, hence it won't override the logger method for this LogSubscriber. In Rails, this means it will fall back to the default `Rails.logger`.
-
+  At the end, this class gets attached to :active_record
 
 ### Be careful with variable scopes and lambdas
   Since lambda's are used to define method bodies, be careful with context of variables.
