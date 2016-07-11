@@ -14,12 +14,12 @@ describe A2bLogging do
 
   describe ".attach_to_instrumentations" do
 
-    context "config[:instrumentations] have been set" do
+    context "config[:instrumentations] have been set with :name, :block and :logger " do
       before do
         A2bLogging.application = application_with_a2b
       end
 
-      it "adds an extra LogSubscriber" do
+      it "adds an LogSubscriber" do
         expect{ subject.attach_to_instrumentations }.to change{
           ActiveSupport::LogSubscriber.log_subscribers.count
         }.by 1        
@@ -43,9 +43,39 @@ describe A2bLogging do
         log_subscribers_after = ActiveSupport::LogSubscriber.log_subscribers.clone
 
         added_log_subscriber = (log_subscribers_after - log_subscribers_before).first
-        listener = ActiveSupport::Notifications.notifier.listeners_for("process_action.action_controller")[-1]
+
+        instrumentation = A2bLogging.application.config.a2b_logging[:instrumentations].first[:name]        
+        listener = ActiveSupport::Notifications.notifier.listeners_for(instrumentation)[-1]
 
         expect(added_log_subscriber).to eq listener.instance_variable_get(:@delegate)
+      end
+
+      it "any instance of the added LogSubscriber class will return the same instance of the specified logger" do
+        log_subscribers_before = ActiveSupport::LogSubscriber.log_subscribers.clone
+        subject.attach_to_instrumentations
+        log_subscribers_after = ActiveSupport::LogSubscriber.log_subscribers.clone
+
+        added_log_subscriber = (log_subscribers_after - log_subscribers_before).first
+
+        expect(added_log_subscriber.logger.object_id).to eq added_log_subscriber.class.new.logger.object_id
+      end
+    end
+
+    context "logger hasn't been defined" do
+      before do
+        cloned_configs = dummy_a2b_configs.clone
+        cloned_configs[:instrumentations].first.delete(:logger)
+        app = mock_application_with(cloned_configs)
+        A2bLogging.application = app        
+      end
+
+      it "won't assign a logger" do
+        log_subscribers_before = ActiveSupport::LogSubscriber.log_subscribers.clone
+        subject.attach_to_instrumentations
+        log_subscribers_after = ActiveSupport::LogSubscriber.log_subscribers.clone
+        added_log_subscriber = (log_subscribers_after - log_subscribers_before).first
+
+        expect(added_log_subscriber.logger).to be_nil
       end
     end
 
@@ -81,7 +111,7 @@ describe A2bLogging do
         A2bLogging.application = application_without_a2b
       end
 
-      it "does not delegate to A2bLogging::Unsubscriber" do
+      it "does not invoke A2bLogging::Unsubscriber.unsubscribe_from_rails_defaults" do
         expect(A2bLogging::Unsubscriber).not_to receive(:unsubscribe_from_rails_defaults)
         subject.unsubscribe_from_rails_defaults
       end      
