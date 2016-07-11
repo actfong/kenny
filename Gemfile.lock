@@ -117,7 +117,7 @@ PLATFORMS
 DEPENDENCIES
   a2b_logging!
   bundler (~> 1.12)
-  pry (~> 0.10.3)
+  pry (~> 0.10)
   rake (~> 10.0)
   rspec (~> 3.0)
 
