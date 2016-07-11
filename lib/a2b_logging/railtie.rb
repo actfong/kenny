@@ -8,8 +8,7 @@ module A2bLogging
   class Railtie < Rails::Railtie
     config.a2b_logging = ActiveSupport::OrderedOptions.new
 
-    config.before_initialize do |app|
-      # Attach Rails-app to A2bLogging when the Rails-app initializes.
+    config.after_initialize do |app|
       A2bLogging.application = app
 
       # Define anonymous classes that inherit from ActiveSupport::LogSubscriber.
@@ -17,9 +16,7 @@ module A2bLogging
       # perform the user-defined actions when that instrumentation occurs.
       # If desired, user can define a specific logger for the specified instrumentation.
       A2bLogging.attach_to_instrumentations
-    end
 
-    config.after_initialize do |app|
       # Unsubscribe all default Rails LogSubscribers if demanded
       A2bLogging.unsubscribe_from_rails_defaults
     end
