@@ -49,13 +49,15 @@ module A2bLogging
   # Within these classes, methods (and eventually logger) are defined based on the
   # instrumentations-configs provided by the user.
   def self.define_log_subscriber_class(instr_config)
-    klass = Class.new(A2bLogging::LogSubscriber) do
+    klass = Class.new(A2bLogging::LogSubscriber) do |k|
       define_method( instr_config[:name].split(".")[0], instr_config[:block] )
 
       if instr_config[:logger]
-        define_method(:logger, instr_config[:logger] )
-      else
-        define_method(:logger, lambda{Rails.logger})
+        # Following assignment needed as we don't want to have 
+        # the lambda being re-evaluated and possibly return 
+        # a new logger instance everytime the .logger method is invoked.
+        defined_logger = instr_config[:logger]
+        define_method(:logger, lambda{defined_logger})
       end
 
     end
