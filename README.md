@@ -33,29 +33,29 @@ Or command line:
   This depends on whether you want to same or different behaviour accross environments.
 
   ```ruby
-  MyApp::Application.configure do
-    request_logger = ActiveSupport::Logger.new( File.join(Rails.root, "log", "process_action.log") )
-    log_stash_formatter = A2bLogging::Formatters::LogStashFormatter.new
-    request_logger.formatter = log_stash_formatter
+MyApp::Application.configure do
+  request_logger = ActiveSupport::Logger.new( File.join(Rails.root, "log", "process_action.log") )
+  log_stash_formatter = A2bLogging::Formatters::LogStashFormatter.new
+  request_logger.formatter = log_stash_formatter
 
-    config.a2b_logging = {
-      instrumentations:[ 
-        { name: 'process_action.action_controller',
-          block: lambda do |event|
-            data = MyDataBuilder.build(event)
-            logger.info("#{event.name}: #{data}")
-          end,
-         logger: request_logger
-        },
-        { name: 'sql.active_record',
-          block: lambda do |event|
-            data = event.payload
-            Rails.logger.info("#{event.name}: #{data}") 
-          end
-        }
-      ]
-    }
-  end
+  config.a2b_logging = {
+    instrumentations:[ 
+      { name: 'process_action.action_controller',
+        block: lambda do |event|
+          data = MyDataBuilder.build(event)
+          logger.info("#{event.name}: #{data}")
+        end,
+       logger: request_logger
+      },
+      { name: 'sql.active_record',
+        block: lambda do |event|
+          data = event.payload
+          Rails.logger.info("#{event.name}: #{data}") 
+        end
+      }
+    ]
+  }
+end
 
   ```
 
