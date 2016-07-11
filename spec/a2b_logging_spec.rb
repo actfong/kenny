@@ -2,31 +2,89 @@ require "spec_helper"
 
 describe A2bLogging do
 
-  let(:application){double(config: app_config)}
-
-  let(:app_config) do
+  let(:application_with_a2b){double(config: app_config_with_a2b)}
+  let(:app_config_with_a2b) do
     double(a2b_logging: dummy_a2b_configs)
   end
 
-  before do
-    A2bLogging.application = application
-  end  
-  describe ".attach_to_instrumentation" do
-    it "adds an anoymous class < A2bLogging::LogSubscriber to listen to event listed in config" do
-      subject.attach_to_instrumentation
-      listener = ActiveSupport::Notifications.notifier.listeners_for("process_action.action_controller")[-1]
-      listener_delegator = listener.instance_variable_get(:@delegate)
+  let(:application_without_a2b){double(config: app_config_without_a2b)}  
+  let(:app_config_without_a2b) do
+    double(a2b_logging: {})
+  end
 
-      expect(
-        listener_delegator.class.superclass
-      ).to eq A2bLogging::LogSubscriber
+  describe ".attach_to_instrumentations" do
+
+    context "config[:instrumentations] have been set" do
+      before do
+        A2bLogging.application = application_with_a2b
+      end
+
+      it "adds an extra LogSubscriber" do
+        expect{ subject.attach_to_instrumentations }.to change{
+          ActiveSupport::LogSubscriber.log_subscribers.count
+        }.by 1        
+      end
+
+      it "the added LogSubscriber is inherited from A2bLogging::LogSubscriber" do
+        log_subscribers_before = ActiveSupport::LogSubscriber.log_subscribers.clone
+        subject.attach_to_instrumentations
+        log_subscribers_after = ActiveSupport::LogSubscriber.log_subscribers.clone
+
+        added_log_subscriber = (log_subscribers_after - log_subscribers_before).first
+
+        expect(
+          added_log_subscriber.class.superclass
+        ).to eq A2bLogging::LogSubscriber
+      end
+
+      it "the added LogSubscriber listens to the specified instrumentation" do
+        log_subscribers_before = ActiveSupport::LogSubscriber.log_subscribers.clone
+        subject.attach_to_instrumentations
+        log_subscribers_after = ActiveSupport::LogSubscriber.log_subscribers.clone
+
+        added_log_subscriber = (log_subscribers_after - log_subscribers_before).first
+        listener = ActiveSupport::Notifications.notifier.listeners_for("process_action.action_controller")[-1]
+
+        expect(added_log_subscriber).to eq listener.instance_variable_get(:@delegate)
+      end
+    end
+
+    context "config[:instrumentations] not set" do
+      before do
+        A2bLogging.application = application_without_a2b
+      end
+
+      it "won't add extra LogSubscribers" do  
+        expect{ 
+          subject.attach_to_instrumentations
+        }.not_to change{
+          ActiveSupport::LogSubscriber.log_subscribers
+        }
+      end
     end
   end
 
   describe ".unsubscribe_from_rails_defaults" do
-    it "delegates to A2bLogging::Unsubscriber" do
-      expect(A2bLogging::Unsubscriber).to receive(:unsubscribe_all)
-      subject.unsubscribe_from_rails_defaults
+    context "config[:unsubscribe_rails_defaults] is truthy" do
+      before do
+        A2bLogging.application = application_with_a2b
+      end
+
+      it "delegates to A2bLogging::Unsubscriber" do
+        expect(A2bLogging::Unsubscriber).to receive(:unsubscribe_all)
+        subject.unsubscribe_from_rails_defaults
+      end
+    end
+
+    context "config[:unsubscribe_rails_defaults] is not truthy" do
+      before do
+        A2bLogging.application = application_without_a2b
+      end
+
+      it "does not delegate to A2bLogging::Unsubscriber" do
+        expect(A2bLogging::Unsubscriber).not_to receive(:unsubscribe_all)
+        subject.unsubscribe_from_rails_defaults
+      end      
     end
   end
 end

@@ -15,7 +15,7 @@ module A2bLogging
     @@application
   end
 
-  def self.attach_to_instrumentation
+  def self.attach_to_instrumentations
     if @@application.config.a2b_logging[:instrumentations]
       @@application.config.a2b_logging[:instrumentations].each do |instr_config|
         define_log_subscriber_class(instr_config)
@@ -24,7 +24,9 @@ module A2bLogging
   end
 
   def self.unsubscribe_from_rails_defaults
-    A2bLogging::Unsubscriber.unsubscribe_all
+    if @@application.config.a2b_logging[:unsubscribe_rails_defaults]
+      A2bLogging::Unsubscriber.unsubscribe_all
+    end
   end
 
   def self.define_log_subscriber_class(instr_config)

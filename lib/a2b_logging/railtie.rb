@@ -13,11 +13,11 @@ module A2bLogging
       # Within that class, define methods that perform a user-define action when an instrumentation occurs
       # If desired, user can define a specific logger for the specified instrumentation
       A2bLogging.application = app
-      A2bLogging.attach_to_instrumentation
+      A2bLogging.attach_to_instrumentations
     end
 
     config.after_initialize do |app|
-      # Unsubscribe all default Rails LogSubscribers 
+      # Unsubscribe all default Rails LogSubscribers if demanded
       A2bLogging.unsubscribe_from_rails_defaults
     end
   end
