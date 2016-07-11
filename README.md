@@ -61,7 +61,7 @@ end
 
   ```
 
-### :instrumentations configuration
+### `:instrumentations` configuration
   Before proceeding, please make sure you are familiar with the [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html)
 
   In the example above, we setup A2bLogging to monitor two instrumentation events, `process_action.action_controller` and `sql.active_record`.
@@ -88,7 +88,7 @@ end
   The difference is that `:logger` has not been provided, hence it won't override the logger method for this LogSubscriber. In Rails, this means it will fall back to the default `Rails.logger`.
   At the end, this class gets attached to :active_record
 
-### Be careful with variable scopes and lambdas
+#### Be careful with variable scopes and lambdas
   Since lambda's are used to define method bodies, be careful with context of variables.
   Take the example below:
 
