@@ -35,29 +35,31 @@ Or command line:
   Here is an example, its details will be explained in the following paragraphs.
 
   ```ruby
-MyApp::Application.configure do
-  request_logger = ActiveSupport::Logger.new( File.join(Rails.root, "log", "process_action.log") )
-  log_stash_formatter = A2bLogging::Formatters::LogStashFormatter.new
-  request_logger.formatter = log_stash_formatter
+  # Example  
+  MyApp::Application.configure do
+    # Define a logger-instance with formatter to be used later
+    request_logger = ActiveSupport::Logger.new( File.join(Rails.root, "log", "process_action.log") )
+    log_stash_formatter = A2bLogging::Formatters::LogStashFormatter.new
+    request_logger.formatter = log_stash_formatter
 
-  config.a2b_logging = {
-    instrumentations:[ 
-      { name: 'process_action.action_controller',
-        block: lambda do |event|
-          data = MyDataBuilder.build(event)
-          logger.info("#{event.name}: #{data}")
-        end,
-       logger: request_logger
-      },
-      { name: 'sql.active_record',
-        block: lambda do |event|
-          data = event.payload
-          Rails.logger.info("#{event.name}: #{data}") 
-        end
-      }
-    ]
-  }
-end
+    config.a2b_logging = {
+      instrumentations:[ 
+        { name: 'process_action.action_controller',
+          block: lambda do |event|
+            data = MyDataBuilder.build(event)
+            logger.info("#{event.name}: #{data}")
+          end,
+         logger: request_logger
+        },
+        { name: 'sql.active_record',
+          block: lambda do |event|
+            data = event.payload
+            Rails.logger.info("#{event.name}: #{data}") 
+          end
+        }
+      ]
+    }
+  end
 
   ```
 
@@ -152,3 +154,9 @@ end
   ```
 
   Again, there is no requirement for you to write messages to log files. It is all up to you.
+
+## Formatters
+  pending
+
+## Suppress Rack::Logger
+  pending
