@@ -62,7 +62,7 @@ end
   ```
 
 ### `:instrumentations` configuration
-  Before proceeding, please make sure you are familiar with the [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html)
+  Before proceeding, please make sure you are familiar with the [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) and [LogSubscriber](http://api.rubyonrails.org/classes/ActiveSupport/LogSubscriber.html)
 
   In the example above, we setup A2bLogging to monitor two instrumentation events, `process_action.action_controller` and `sql.active_record`.
 
@@ -111,7 +111,8 @@ end
   Since `logger` is within scope at the time when the lambda was defined, this instance of ActiveSupport::Logger will be used to invoke `#info` when 'sql.active_record' occurs.
 
 ## Unsubscribe Rails' default LogSubscribers from their subscribed instrumentation-events
-  Apart from defining your actions when an instrumentation-event occurs and where to log the data to, you can also use A2bLogging to unsubscribe all Rails LogSubscribers from their subscribed instrumentation-events.
+  A2bLogging can also used to unsubscribe all Rails LogSubscribers from their subscribed instrumentation-events.
+  You can do that by setting `:unsubscribe_rails_defaults` to true:
 
   ``` Ruby
   config.a2b_logging = {
@@ -126,7 +127,7 @@ end
 
 ## Open-to-Implementation approach
   As you might have seen from the example, the `:block` allows you to define your own implementation.
-  My idea behind writing this gem, is to free up the user from the tedious task of defining LogSubscriber classes and to allow the user define whatever (s)he wants to do with the event data, be it something like:
+  My idea behind writing this gem, is to free up the user from the tedious task of defining LogSubscriber classes and to allow the user to define whatever (s)he wants to do with the event data, be it something like:
 
   ```Ruby
     config.a2b_logging = {
@@ -134,17 +135,19 @@ end
         { name: 'process_action.action_controller',
           block: lambda do |event|
             data = MyDataBuilder.build(event)
-            Fluent::Logger.post(FLUENTD_APP_EVENTS_LABEL, data) # Use Fluent to send data to another server
+             # Use Fluent to send data to another server
+            Fluent::Logger.post(FLUENTD_APP_EVENTS_LABEL, data)
           end 
         },
         { name: 'sql.active_record',
           block: lambda do |event|
             data = MyDataBuilder.build(event)
-            Something.async.processdata(data) # Do someting asynchronously
+            # Do someting asynchronously
+            Something.async.processdata(data)
           end 
         }
       ]
     }
   ```
 
-  And again, there is no requirement for you to write messages to log files. It is all up to you.
+  Again, there is no requirement for you to write messages to log files. It is all up to you.
