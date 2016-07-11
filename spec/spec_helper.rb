@@ -3,9 +3,9 @@ require 'a2b_logging'
 require 'pry'
 
 def dummy_a2b_configs
-  logger = ActiveSupport::Logger.new( File.join("requests.test.log") )
+  request_logger = ActiveSupport::Logger.new( File.join("requests.test.log") )
   log_stash_formatter = A2bLogging::Formatters::LogStashFormatter.new
-  logger.formatter = log_stash_formatter
+  request_logger.formatter = log_stash_formatter
 
   ActiveSupport::OrderedOptions.new.tap do |a2b_config|
     a2b_config.unsubscribe_rails_defaults = true
@@ -15,7 +15,7 @@ def dummy_a2b_configs
           data = DataBuilders::RequestsData.build(event)
           logger.info(data)
         end,
-        logger: logger
+        logger: request_logger
       }
     ]
   end
