@@ -21,3 +21,12 @@ def dummy_a2b_configs
   end
 end
 
+def default_patterns
+  ActiveSupport::LogSubscriber.log_subscribers.map(&:patterns).flatten
+end
+
+def default_patterns_listeners
+  default_patterns.map do |p|
+    ActiveSupport::Notifications.notifier.listeners_for(p)
+  end.flatten
+end
