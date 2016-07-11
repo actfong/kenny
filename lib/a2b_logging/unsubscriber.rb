@@ -9,6 +9,17 @@ module A2bLogging
       ActionMailer::LogSubscriber
     ]
 
+    ##
+    # By default, a Rails app instantiates the LogSubscribers listed above and
+    # are actively listening to instrumentations listed in:
+    # http://edgeguides.rubyonrails.org/active_support_instrumentation.html
+    # 
+    # Unsubscribing is not recommended, unless you want to modify the output
+    # to your standard rails logs (development|test|staging|production).log
+    # 
+    # It would be safer to write your chosen instrumentation data to a separate file,
+    # setup by the [:logger] configuration (see Readme). In that case, the [:unsubscribe_rails_defaults]
+    # field in A2bLogging's config won't need to be set.
     def self.unsubscribe_from_rails_defaults
       default_rails_log_subscribers.each do |subscriber|
         subscribed_events_for(subscriber).each do |event|

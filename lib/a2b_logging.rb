@@ -21,6 +21,7 @@ module A2bLogging
     @@application
   end
 
+  ##
   # Define LogSubscriber-classes and Attach to user-specified instrumentations
   # if the configurations have been set.
   def self.attach_to_instrumentations
