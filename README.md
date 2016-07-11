@@ -116,7 +116,7 @@ Or command line:
       # your stuff
     }]
   }
-  ``` Ruby
+  ```
 
   By doing so, your `development|test|staging|production.log` will not have any of the default log messages. This is not an approach I would recommend, unless you are desparate to have all messages from your specified instrumentation-events all logged into one `development|test|staging|production.log`.
 
