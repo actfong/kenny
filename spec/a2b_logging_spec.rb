@@ -11,9 +11,15 @@ describe A2bLogging do
   before do
     A2bLogging.application = application
   end  
-  describe "attach_to_instrumentation" do
-    it "expect an anoymous class < LogSubscriber to listen to event listed in config" do
+  describe ".attach_to_instrumentation" do
+    it "adds an anoymous class < A2bLogging::LogSubscriber to listen to event listed in config" do
       subject.attach_to_instrumentation
+      listener = ActiveSupport::Notifications.notifier.listeners_for("process_action.action_controller")[-1]
+      listener_delegator = listener.instance_variable_get(:@delegate)
+
+      expect(
+        listener_delegator.class.superclass
+      ).to eq A2bLogging::LogSubscriber
     end
   end
 

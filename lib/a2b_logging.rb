@@ -3,6 +3,7 @@ require_relative "../rails_ext/rack/logger"
 
 require_relative "./a2b_logging/formatters/log_stash_formatter"
 require_relative "./a2b_logging/unsubscriber"
+require_relative "./a2b_logging/log_subscriber"
 
 module A2bLogging
 
@@ -27,7 +28,7 @@ module A2bLogging
   end
 
   def self.define_log_subscriber_class(instr_config)
-    klass = Class.new(ActiveSupport::LogSubscriber) do
+    klass = Class.new(A2bLogging::LogSubscriber) do
       define_method( instr_config[:name].split(".")[0], instr_config[:block] )
 
       if instr_config[:logger]
