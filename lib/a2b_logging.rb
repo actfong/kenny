@@ -25,7 +25,7 @@ module A2bLogging
 
   def self.unsubscribe_from_rails_defaults
     if @@application.config.a2b_logging[:unsubscribe_rails_defaults]
-      A2bLogging::Unsubscriber.unsubscribe_all
+      A2bLogging::Unsubscriber.unsubscribe_from_rails_defaults
     end
   end
 

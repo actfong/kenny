@@ -9,12 +9,10 @@ module A2bLogging
       ActionMailer::LogSubscriber
     ]
 
-    def self.unsubscribe_all
-      if A2bLogging.application.config.a2b_logging[:unsubscribe_rails_defaults]        
-        default_rails_log_subscribers.each do |subscriber|
-          subscribed_events_for(subscriber).each do |event|
-            unsubscribe_listeners_for_event(subscriber, event)
-          end
+    def self.unsubscribe_from_rails_defaults
+      default_rails_log_subscribers.each do |subscriber|
+        subscribed_events_for(subscriber).each do |event|
+          unsubscribe_listeners_for_event(subscriber, event)
         end
       end
     end

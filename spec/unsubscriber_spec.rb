@@ -1,59 +1,40 @@
 require "spec_helper"
 
 describe A2bLogging::Unsubscriber do
-  let(:default_patterns){
-    ActiveSupport::LogSubscriber.log_subscribers.map(&:patterns).flatten
-  }
 
-  let(:default_patterns_listeners) do
-    lambda do
-      default_patterns.map do |p|
-        ActiveSupport::Notifications.notifier.listeners_for(p)
-      end.flatten
-    end
-  end
-
-  let(:application){double(config: app_config)}
-
-  let(:app_config) do
+  let(:application_with_a2b){double(config: app_config_with_a2b)}
+  let(:app_config_with_a2b) do
     double(a2b_logging: dummy_a2b_configs)
   end
 
-  before do
-    A2bLogging.application = application
-  end
+  describe ".unsubscribe_from_rails_defaults" do
 
-  describe ".unsubscribe_all" do
-    context "No custom LogSubscribers attached" do
-      it 'removes listeners_for default_patterns' do
-        before_count = default_patterns_listeners.call.count
-
-        A2bLogging::Unsubscriber.unsubscribe_all
-
-        after_count = default_patterns_listeners.call.count
-
-        expect(before_count).not_to eq after_count
-        expect(after_count).to eq 0
-      end
+    before do
+      A2bLogging.application = application_with_a2b
     end
 
-    context "Custom A2bLogging LogSubscribers attached" do
+    it 'removes listeners_for default_patterns' do
+      expect{ 
+        A2bLogging::Unsubscriber.unsubscribe_from_rails_defaults
+      }.to change{ 
+        default_patterns_listeners.count
+      }
 
-      it "keeps only the Custom LosSubscriber as listener" do
-        before_count = default_patterns_listeners.call.count
+      log_subscribers = default_patterns_listeners.map{ |listener| listener.instance_variable_get(:@delegate) }
 
-        A2bLogging.attach_to_instrumentation
-        A2bLogging::Unsubscriber.unsubscribe_all
+      log_subscribers.each do |ls|
+        expect(ls.class).not_to be_in A2bLogging::Unsubscriber::DEFAULT_RAILS_LOG_SUBSCRIBER_CLASSES
+      end        
+    end
 
-        after_count = default_patterns_listeners.call.count
+    it "leaves the A2bLogging:Unsubscriber attached" do
+      A2bLogging.attach_to_instrumentations
+      A2bLogging::Unsubscriber.unsubscribe_from_rails_defaults
 
-        expect(before_count).not_to eq after_count
+      log_subscribers = default_patterns_listeners.map{ |listener| listener.instance_variable_get(:@delegate) }
 
-        ["process_action.action_controller", "logger.action_controller"].each do |instr|
-          expect(
-            default_patterns_listeners.call.map{ |sub| sub.instance_variable_get "@pattern" } 
-          ).to include instr
-        end
+      log_subscribers.each do |ls|
+        expect(ls.class.superclass).to be A2bLogging::LogSubscriber
       end
     end
 

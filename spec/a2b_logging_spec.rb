@@ -71,7 +71,7 @@ describe A2bLogging do
       end
 
       it "delegates to A2bLogging::Unsubscriber" do
-        expect(A2bLogging::Unsubscriber).to receive(:unsubscribe_all)
+        expect(A2bLogging::Unsubscriber).to receive(:unsubscribe_from_rails_defaults)
         subject.unsubscribe_from_rails_defaults
       end
     end
@@ -82,7 +82,7 @@ describe A2bLogging do
       end
 
       it "does not delegate to A2bLogging::Unsubscriber" do
-        expect(A2bLogging::Unsubscriber).not_to receive(:unsubscribe_all)
+        expect(A2bLogging::Unsubscriber).not_to receive(:unsubscribe_from_rails_defaults)
         subject.unsubscribe_from_rails_defaults
       end      
     end
