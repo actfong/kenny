@@ -112,7 +112,7 @@ Or command line:
   You might think that since no `:logger` option has been provided, for 'sql.active_record' events, the default logger will be used..... But that is not true. 
   Since `logger` is within scope at the time when the lambda was defined, this instance of ActiveSupport::Logger will be used to invoke `#info` when 'sql.active_record' occurs.
 
-## Unsubscribe Rails' default LogSubscribers from their subscribed instrumentation-events
+## `:unsubscribe_rails_defaults` configuration
   A2bLogging can also used to unsubscribe all Rails LogSubscribers from their subscribed instrumentation-events.
   You can do that by setting `:unsubscribe_rails_defaults` to true:
 
