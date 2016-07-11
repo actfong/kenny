@@ -136,13 +136,14 @@ end
           block: lambda do |event|
             data = MyDataBuilder.build(event)
              # Use Fluent to send data to another server
-            Fluent::Logger.post(FLUENTD_APP_EVENTS_LABEL, data)
+            Fluent::Logger::FluentLogger.open(nil, :host=>MY_SERVER, :port=>24224)
+            Fluent::Logger.post('web_requests', data)
           end 
         },
         { name: 'sql.active_record',
           block: lambda do |event|
             data = MyDataBuilder.build(event)
-            # Do someting asynchronously
+            # Do something asynchronously
             Something.async.processdata(data)
           end 
         }
