@@ -9,10 +9,13 @@ module A2bLogging
     config.a2b_logging = ActiveSupport::OrderedOptions.new
 
     config.before_initialize do |app|
-      # Define anonymous classes that inherit from ActiveSupport::LogSubscriber
-      # Within that class, define methods that perform a user-define action when an instrumentation occurs
-      # If desired, user can define a specific logger for the specified instrumentation
+      # Attach Rails-app to A2bLogging when the Rails-app initializes.
       A2bLogging.application = app
+
+      # Define anonymous classes that inherit from ActiveSupport::LogSubscriber.
+      # Within that anonymous class, define methods that 
+      # perform the user-defined actions when that instrumentation occurs.
+      # If desired, user can define a specific logger for the specified instrumentation.
       A2bLogging.attach_to_instrumentations
     end
 

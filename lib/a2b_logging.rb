@@ -1,3 +1,9 @@
+## 
+# A2bLogging module does three things:
+# - Holds reference to the Rails application (set through Railtie)
+# - Unsubscribe all Rails' LogSubscribers from the default instrumentation channels
+# - Create LogSubscriber-classes which will be attached to the user-specified instrumentations
+
 require_relative "./a2b_logging/railtie"
 require_relative "../rails_ext/rack/logger"
 
@@ -15,6 +21,8 @@ module A2bLogging
     @@application
   end
 
+  # Define LogSubscriber-classes and Attach to user-specified instrumentations
+  # if the configurations have been set.
   def self.attach_to_instrumentations
     if @@application.config.a2b_logging[:instrumentations]
       @@application.config.a2b_logging[:instrumentations].each do |instr_config|
@@ -23,12 +31,22 @@ module A2bLogging
     end  
   end
 
+  ##
+  # Unsubscribe all Rails' default LogSubscribers from the default Rails instrumentations,
+  # by delegating to A2bLogging::Unsubscriber.
+  # See http://edgeguides.rubyonrails.org/active_support_instrumentation.html
   def self.unsubscribe_from_rails_defaults
     if @@application.config.a2b_logging[:unsubscribe_rails_defaults]
       A2bLogging::Unsubscriber.unsubscribe_from_rails_defaults
     end
   end
 
+  ##
+  # Create LogSubscriber-classes which will be attached to the user-specified instrumentations
+  # These classes are anonymous, but inherit from A2bLogging::LogSubscriber to simplify testing
+  #
+  # Within these classes, methods (and eventually logger) are defined based on the
+  # instrumentations-configs provided by the user.
   def self.define_log_subscriber_class(instr_config)
     klass = Class.new(A2bLogging::LogSubscriber) do
       define_method( instr_config[:name].split(".")[0], instr_config[:block] )
