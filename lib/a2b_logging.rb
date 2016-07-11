@@ -4,12 +4,12 @@
 # - Unsubscribe all Rails' LogSubscribers from the default instrumentation channels
 # - Create LogSubscriber-classes which will be attached to the user-specified instrumentations
 
-require_relative "./a2b_logging/railtie"
-require_relative "../rails_ext/rack/logger"
+require "a2b_logging/railtie"
+require "a2b_logging/rails_ext/rack/logger"
 
-require_relative "./a2b_logging/formatters/log_stash_formatter"
-require_relative "./a2b_logging/unsubscriber"
-require_relative "./a2b_logging/log_subscriber"
+require "a2b_logging/formatters/log_stash_formatter"
+require "a2b_logging/unsubscriber"
+require "a2b_logging/log_subscriber"
 
 module A2bLogging
 
