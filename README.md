@@ -56,17 +56,19 @@ Or command line:
         block: lambda do |event|
           data = event.payload
           Rails.logger.info("#{event.name}: #{data}") 
-        end }
+        end 
+      }
     ]
 
   end
 
   ```
 
+
 ### `kenny.instrumentations` configuration
   Before proceeding, have a look at [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) and [LogSubscriber](http://api.rubyonrails.org/classes/ActiveSupport/LogSubscriber.html)
 
-  The `kenny.instrumentation` configuration takes an array of hashes. Each hash represents an instrumentation-event that you want to subscribe to.
+  The `kenny.instrumentations` configuration takes an array of hashes. Each hash represents an instrumentation-event that you want to subscribe to.
   
   Each of these hashes requires a `:name` (name of instrumentation event), a `:block` (what to do when that event occurs) and optionally a `:logger` (which logger to use in order to write these events to a file).
 
@@ -84,7 +86,7 @@ Or command line:
   
   The `def logger` method (in ActiveSupport::LogSubscriber) gets overridden and will return the logger-instance that you have provided to the configuration. (In this case, its the `request_logger` that you have defined at the top of your config). 
 
-  This class is then attached to :action_controller
+  This class is then attached to :action_controller, by looking up the event-name 'process_action.action_controller'
 
   The idea of redefining `def logger` may sound a bit scary, but this is necessary to keep events from 
   different instrumentation channels on different log files. If `:logger` option is not provided, then that LogSubscriber class will use the default Rails logger (and hence writing to your production.log etc)
@@ -92,7 +94,7 @@ Or command line:
   The second LogSubscriber class will have method `def start_processing` defined and the method body is again what has been supplied in the :block configuration. 
 
   The difference is that `:logger` has not been provided, hence it won't override the logger method for this LogSubscriber. In Rails, this means it will fall back to the default `Rails.logger`.
-  At the end, this class gets attached to :active_record
+  At the end, this class gets attached to :active_record, by looking up the event-name 'sql.active_record'
 
 #### Be careful with variable scopes and lambdas
   Since lambda's are used to define method bodies, be careful with context of variables.
@@ -116,6 +118,7 @@ Or command line:
   You might think that since no `:logger` option has been provided, for 'sql.active_record' events, the default logger will be used..... But that is not true. 
   Since `logger` is within scope at the time when the lambda was defined, this instance of ActiveSupport::Logger will be used to invoke `#info` when 'sql.active_record' occurs.
 
+
 ### `kenny.unsubscribe_rails_defaults` configuration
   Kenny can also used to unsubscribe all Rails LogSubscribers from their subscribed instrumentation-events.
   You can do that by setting `:unsubscribe_rails_defaults` to true:
@@ -130,6 +133,7 @@ Or command line:
 
   By doing so, your `development|test|staging|production.log` will not have any of the default log messages. This is not an approach I would recommend, unless you are desparate to have all messages from your specified instrumentation-events all logged into one `development|test|staging|production.log`.
 
+
 ### `kenny.suppress_rack_logger` configuration
   By default, your rails app logs messages like these to your environment's log:
 
@@ -138,7 +142,7 @@ Or command line:
   Started GET "/assets/sh/my_styles.css?body=1" for 10.0.2.2 at 2016-07-12 10:06:49 +0000
   ```
 
-  You can suppress these messages by setting :suppress_rack_logger to true.
+  You can suppress these messages by setting kenny.suppress_rack_logger to true.
   This setting will not have any effects on the log files that you create separately with the `:logger` option within your specified instrumentation.
 
 ## Open-to-Implementation approach
