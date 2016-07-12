@@ -42,31 +42,31 @@ Or command line:
     log_stash_formatter = Kenny::Formatters::LogStashFormatter.new
     request_logger.formatter = log_stash_formatter
 
-    config.kenny = {
-      instrumentations:[ 
-        { name: 'process_action.action_controller',
-          block: lambda do |event|
-            data = MyDataBuilder.build(event)
-            logger.info("#{event.name}: #{data}")
-          end,
-         logger: request_logger
-        },
-        { name: 'sql.active_record',
-          block: lambda do |event|
-            data = event.payload
-            Rails.logger.info("#{event.name}: #{data}") 
-          end
-        }
-      ]
-    }
+    config.kenny.unsubscribe_rails_defaults = false
+    config.kenny.suppress_rack_logger = true
+    config.kenny.instrumentations = [ 
+      { name: 'process_action.action_controller',
+        block: lambda do |event|
+          data = MyDataBuilder.build(event)
+          logger.info("#{event.name}: #{data}")
+        end,
+       logger: request_logger
+      },
+      { name: 'sql.active_record',
+        block: lambda do |event|
+          data = event.payload
+          Rails.logger.info("#{event.name}: #{data}") 
+        end }
+    ]
+
   end
 
   ```
 
-### `:instrumentations` configuration
+### `kenny.instrumentations` configuration
   Before proceeding, have a look at [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) and [LogSubscriber](http://api.rubyonrails.org/classes/ActiveSupport/LogSubscriber.html)
 
-  The `:instrumentation` configuration takes an array of hashes. Each hash represents an instrumentation-event that you want to subscribe to.
+  The `kenny.instrumentation` configuration takes an array of hashes. Each hash represents an instrumentation-event that you want to subscribe to.
   
   Each of these hashes requires a `:name` (name of instrumentation event), a `:block` (what to do when that event occurs) and optionally a `:logger` (which logger to use in order to write these events to a file).
 
@@ -103,27 +103,26 @@ Or command line:
   logger = ActiveSupport::Logger.new( File.join(Rails.root, "log", "process_action.log") )
 
   # Then within the instrumentation configuration
-  config.kenny = {
-    instrumentations:[
+  config.kenny.instrumentations = [
     { name: 'sql.active_record',
       block: lambda do |event|
         data = event.payload
         logger.info("#{event.name}: #{data}") 
-      end
+      end 
     }
+  ]
   ``` 
 
   You might think that since no `:logger` option has been provided, for 'sql.active_record' events, the default logger will be used..... But that is not true. 
   Since `logger` is within scope at the time when the lambda was defined, this instance of ActiveSupport::Logger will be used to invoke `#info` when 'sql.active_record' occurs.
 
-### `:unsubscribe_rails_defaults` configuration
+### `kenny.unsubscribe_rails_defaults` configuration
   Kenny can also used to unsubscribe all Rails LogSubscribers from their subscribed instrumentation-events.
   You can do that by setting `:unsubscribe_rails_defaults` to true:
 
   ``` Ruby
-  config.kenny = {
-    unsubscribe_rails_defaults: true,
-    instrumentations:[{
+  config.kenny.unsubscribe_rails_defaults = true
+  config.kenny.instrumentations = [{
       # your stuff
     }]
   }
@@ -131,7 +130,7 @@ Or command line:
 
   By doing so, your `development|test|staging|production.log` will not have any of the default log messages. This is not an approach I would recommend, unless you are desparate to have all messages from your specified instrumentation-events all logged into one `development|test|staging|production.log`.
 
-### `:suppress_rack_logger` configuration
+### `kenny.suppress_rack_logger` configuration
   By default, your rails app logs messages like these to your environment's log:
 
   ```
@@ -147,25 +146,23 @@ Or command line:
   My idea behind writing this gem, is to free up the user from the tedious task of defining LogSubscriber classes and to allow the user to define whatever (s)he wants to do with the event data, be it something like:
 
   ```Ruby
-    config.kenny = {
-      instrumentations:[
-        { name: 'process_action.action_controller',
-          block: lambda do |event|
-            data = MyDataBuilder.build(event)
-             # Use Fluent to send data to another server
-            Fluent::Logger::FluentLogger.open(nil, :host=>MY_SERVER, :port=>24224)
-            Fluent::Logger.post('web_requests', data)
-          end 
-        },
-        { name: 'sql.active_record',
-          block: lambda do |event|
-            data = MyDataBuilder.build(event)
-            # Do something asynchronously
-            Something.async.processdata(data)
-          end 
-        }
-      ]
-    }
+    config.kenny.instrumentations = [
+      { name: 'process_action.action_controller',
+        block: lambda do |event|
+          data = MyDataBuilder.build(event)
+           # Use Fluent to send data to another server
+          Fluent::Logger::FluentLogger.open(nil, :host=>MY_SERVER, :port=>24224)
+          Fluent::Logger.post('web_requests', data)
+        end 
+      },
+      { name: 'sql.active_record',
+        block: lambda do |event|
+          data = MyDataBuilder.build(event)
+          # Do something asynchronously
+          Something.async.processdata(data)
+        end 
+      }
+    ]
   ```
 
   Again, there is no requirement for you to write messages to log files. It is all up to you.

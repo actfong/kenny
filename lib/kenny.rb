@@ -5,7 +5,6 @@
 # - Create LogSubscriber-classes which will be attached to the user-specified instrumentations
 
 require "kenny/railtie"
-require "kenny/rails_ext/rack/logger"
 
 require "kenny/formatters/log_stash_formatter"
 require "kenny/unsubscriber"

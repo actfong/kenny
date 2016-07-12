@@ -6,7 +6,11 @@ require 'action_mailer/log_subscriber'
 
 module Kenny
   class Railtie < Rails::Railtie
-    config.kenny = ActiveSupport::OrderedOptions.new
+    config.kenny = Struct.new(
+      :unsubscribe_rails_defaults, 
+      :suppress_rack_logger, 
+      :instrumentations
+    ).new
 
     config.after_initialize do |app|
       Kenny.application = app
