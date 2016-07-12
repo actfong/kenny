@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'active_support'
 
-RSpec.describe A2bLogging::Formatters::LogStashFormatter, "A2BFormatter" do
+RSpec.describe Kenny::Formatters::LogStashFormatter, "kennyFormatter" do
   describe "the json output" do
     subject { JSON.parse(strio.string) }
 
@@ -11,7 +11,7 @@ RSpec.describe A2bLogging::Formatters::LogStashFormatter, "A2BFormatter" do
 
     context "when not using tags" do
       before do
-        tagged_logger.formatter = A2bLogging::Formatters::LogStashFormatter.new
+        tagged_logger.formatter = Kenny::Formatters::LogStashFormatter.new
         tagged_logger.info log_input
       end
 
@@ -46,7 +46,7 @@ RSpec.describe A2bLogging::Formatters::LogStashFormatter, "A2BFormatter" do
 
     context "when using tags" do
       before do
-        tagged_logger.formatter = A2bLogging::Formatters::LogStashFormatter.new
+        tagged_logger.formatter = Kenny::Formatters::LogStashFormatter.new
         tagged_logger.tagged("test_type") do
           tagged_logger.tagged("test_tag") do
             tagged_logger.info "foobar"

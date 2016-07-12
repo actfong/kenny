@@ -2,7 +2,7 @@
 
 require "bundler"
 Bundler.require :default, :development
-file = File.expand_path("../../lib/a2b_logging.rb", __FILE__)
+file = File.expand_path("../../lib/kenny.rb", __FILE__)
 require file
 
 Pry.start

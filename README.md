@@ -1,9 +1,9 @@
-# A2bLogging
+# Kenny
 Inspired by [lograge](https://github.com/roidrage/lograge), but without the rage.
 
 Lograge does a great job in suppressing Rails' log output, but it does so by overriding Rails' default behaviour for instrumentations/subscriptions, as well as having a say on the content of the log messages.
 
-A2bLogging attempts to leave implementations to the user and provide a more modular way to monitor instrumentation events.
+Kenny attempts to leave implementations to the user and provide a more modular way to monitor instrumentation events.
 It allows the user to decide: 
 - which instrumentations to monitor
 - what to do when the specified instrumentation-event occurs
@@ -17,7 +17,7 @@ Best to be explained with an example.
 Gemfile:
 
 ```ruby
-gem 'a2b_logging'
+gem 'kenny'
 ```
 
 And then execute:
@@ -26,10 +26,10 @@ And then execute:
 
 Or command line:
 
-    $ gem install a2b_logging
+    $ gem install kenny
 
 ## Usage
-  A2bLogging can be configured through an initializer (`config/initializers/a2b_logging.rb`) or within the configuration file of your environment `development|test|staging|production.rb`. 
+  Kenny can be configured through an initializer (`config/initializers/kenny.rb`) or within the configuration file of your environment `development|test|staging|production.rb`. 
   This depends on whether you want to same or different behaviour accross environments.
 
   Here is an example, its details will be explained in the following paragraphs.
@@ -39,10 +39,10 @@ Or command line:
   MyApp::Application.configure do
     # Define a logger-instance with formatter to be used later
     request_logger = ActiveSupport::Logger.new( File.join(Rails.root, "log", "process_action.log") )
-    log_stash_formatter = A2bLogging::Formatters::LogStashFormatter.new
+    log_stash_formatter = Kenny::Formatters::LogStashFormatter.new
     request_logger.formatter = log_stash_formatter
 
-    config.a2b_logging = {
+    config.kenny = {
       instrumentations:[ 
         { name: 'process_action.action_controller',
           block: lambda do |event|
@@ -66,7 +66,7 @@ Or command line:
 ### `:instrumentations` configuration
   Before proceeding, please make sure you are familiar with the [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) and [LogSubscriber](http://api.rubyonrails.org/classes/ActiveSupport/LogSubscriber.html)
 
-  In the example above, we setup A2bLogging to monitor two instrumentation events, `process_action.action_controller` and `sql.active_record`.
+  In the example above, we setup Kenny to monitor two instrumentation events, `process_action.action_controller` and `sql.active_record`.
 
   For every instrumentation that you want to monitor, you have to provide a `:name` and a `:block`. `:logger` is optional
 
@@ -99,7 +99,7 @@ Or command line:
   logger = ActiveSupport::Logger.new( File.join(Rails.root, "log", "process_action.log") )
 
   # Then within the instrumentation configuration
-  config.a2b_logging = {
+  config.kenny = {
     instrumentations:[
     { name: 'sql.active_record',
       block: lambda do |event|
@@ -112,12 +112,12 @@ Or command line:
   You might think that since no `:logger` option has been provided, for 'sql.active_record' events, the default logger will be used..... But that is not true. 
   Since `logger` is within scope at the time when the lambda was defined, this instance of ActiveSupport::Logger will be used to invoke `#info` when 'sql.active_record' occurs.
 
-## `:unsubscribe_rails_defaults` configuration
-  A2bLogging can also used to unsubscribe all Rails LogSubscribers from their subscribed instrumentation-events.
+### `:unsubscribe_rails_defaults` configuration
+  Kenny can also used to unsubscribe all Rails LogSubscribers from their subscribed instrumentation-events.
   You can do that by setting `:unsubscribe_rails_defaults` to true:
 
   ``` Ruby
-  config.a2b_logging = {
+  config.kenny = {
     unsubscribe_rails_defaults: true,
     instrumentations:[{
       # your stuff
@@ -132,7 +132,7 @@ Or command line:
   My idea behind writing this gem, is to free up the user from the tedious task of defining LogSubscriber classes and to allow the user to define whatever (s)he wants to do with the event data, be it something like:
 
   ```Ruby
-    config.a2b_logging = {
+    config.kenny = {
       instrumentations:[
         { name: 'process_action.action_controller',
           block: lambda do |event|

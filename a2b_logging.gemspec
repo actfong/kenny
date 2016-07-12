@@ -1,6 +1,6 @@
 # coding: utf-8
 Gem::Specification.new do |spec|
-  spec.name          = "a2b_logging"
+  spec.name          = "kenny"
   spec.version       = "0.1.0"
   spec.authors       = ["Mathias Rüdiger"]
   spec.email         = ["mathias.ruediger@fromatob.com"]
@@ -18,9 +18,9 @@ Gem::Specification.new do |spec|
     raise "RubyGems 2.0 or newer is required to protect against public gem pushes."
   end
 
-  spec.files         = Dir["lib/a2b_logging.rb",
+  spec.files         = Dir["lib/kenny.rb",
                            "lib/railtie.rb", 
-                           "lib/a2b_logging/**/*.rb", 
+                           "lib/kenny/**/*.rb", 
                            "Gemfile", 
                            "LICENSE", 
                            "Rakefile", 

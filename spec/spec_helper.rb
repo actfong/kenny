@@ -1,15 +1,15 @@
-require 'a2b_logging'
+require 'kenny'
 
 require 'pry'
 
-def dummy_a2b_configs
+def dummy_kenny_configs
   request_logger = ActiveSupport::Logger.new( File.join("requests.test.log") )
-  log_stash_formatter = A2bLogging::Formatters::LogStashFormatter.new
+  log_stash_formatter = Kenny::Formatters::LogStashFormatter.new
   request_logger.formatter = log_stash_formatter
 
-  ActiveSupport::OrderedOptions.new.tap do |a2b_config|
-    a2b_config.unsubscribe_rails_defaults = true
-    a2b_config.instrumentations = [ 
+  ActiveSupport::OrderedOptions.new.tap do |kenny_config|
+    kenny_config.unsubscribe_rails_defaults = true
+    kenny_config.instrumentations = [ 
       { name: 'process_action.action_controller',
         block: lambda do |event|
           data = DataBuilders::RequestsData.build(event)
@@ -32,5 +32,5 @@ def default_patterns_listeners
 end
 
 def mock_application_with(configs)
-  double(config: double(a2b_logging: configs))
+  double(config: double(kenny: configs))
 end
