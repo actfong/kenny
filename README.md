@@ -116,7 +116,7 @@ Or command line:
   You might think that since no `:logger` option has been provided, for 'sql.active_record' events, the default logger will be used..... But that is not true. 
   Since `logger` is within scope at the time when the lambda was defined, this instance of ActiveSupport::Logger will be used to invoke `#info` when 'sql.active_record' occurs.
 
-## `:unsubscribe_rails_defaults` configuration
+### `:unsubscribe_rails_defaults` configuration
   Kenny can also used to unsubscribe all Rails LogSubscribers from their subscribed instrumentation-events.
   You can do that by setting `:unsubscribe_rails_defaults` to true:
 
@@ -130,6 +130,17 @@ Or command line:
   ```
 
   By doing so, your `development|test|staging|production.log` will not have any of the default log messages. This is not an approach I would recommend, unless you are desparate to have all messages from your specified instrumentation-events all logged into one `development|test|staging|production.log`.
+
+### `:suppress_rack_logger` configuration
+  By default, your rails app logs messages like these to your environment's log:
+
+  ```
+  Started GET "/my_path" for 10.0.2.2 at 2016-07-12 10:06:48 +0000
+  Started GET "/assets/sh/my_styles.css?body=1" for 10.0.2.2 at 2016-07-12 10:06:49 +0000
+  ```
+
+  You can suppress these messages by setting :suppress_rack_logger to true.
+  This setting will not have any effects on the log files that you create separately with the `:logger` option within your specified instrumentation.
 
 ## Open-to-Implementation approach
   As you might have seen from the example, the `:block` allows you to define your own implementation.
@@ -163,6 +174,3 @@ Or command line:
   Apart from subscribing to instrumentation-events and logging, Kenny also provides formatters, which you can attach to a logger.
 
   Currently it only comes with a LogStashFormatter, but feel free to add more Formatters to make this project great.
-
-## Suppress Rack::Logger
-  

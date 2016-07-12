@@ -19,6 +19,9 @@ module Kenny
 
       # Unsubscribe all default Rails LogSubscribers if demanded
       Kenny.unsubscribe_from_rails_defaults
+
+      # Suppress Rails Rack::Rack::Logger's output
+      Kenny.suppress_rack_logger
     end
   end
 end
