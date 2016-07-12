@@ -64,7 +64,11 @@ Or command line:
   ```
 
 ### `:instrumentations` configuration
-  Before proceeding, please make sure you are familiar with the [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) and [LogSubscriber](http://api.rubyonrails.org/classes/ActiveSupport/LogSubscriber.html)
+  Before proceeding, have a look at [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) and [LogSubscriber](http://api.rubyonrails.org/classes/ActiveSupport/LogSubscriber.html)
+
+  The `:instrumentation` configuration takes an array of hashes. Each hash represents an instrumentation-event that you want to subscribe to.
+  
+  Each of these hashes requires a `:name` (name of instrumentation event), a `:block` (what to do when that event occurs) and optionally a `:logger` (which logger to use in order to write these events to a file).
 
   In the example above, we setup Kenny to monitor two instrumentation events, `process_action.action_controller` and `sql.active_record`.
 
@@ -112,7 +116,7 @@ Or command line:
   You might think that since no `:logger` option has been provided, for 'sql.active_record' events, the default logger will be used..... But that is not true. 
   Since `logger` is within scope at the time when the lambda was defined, this instance of ActiveSupport::Logger will be used to invoke `#info` when 'sql.active_record' occurs.
 
-### `:unsubscribe_rails_defaults` configuration
+## `:unsubscribe_rails_defaults` configuration
   Kenny can also used to unsubscribe all Rails LogSubscribers from their subscribed instrumentation-events.
   You can do that by setting `:unsubscribe_rails_defaults` to true:
 
@@ -156,7 +160,9 @@ Or command line:
   Again, there is no requirement for you to write messages to log files. It is all up to you.
 
 ## Formatters
-  pending
+  Apart from subscribing to instrumentation-events and logging, Kenny also provides formatters, which you can attach to a logger.
+
+  Currently it only comes with a LogStashFormatter, but feel free to add more Formatters to make this project great.
 
 ## Suppress Rack::Logger
-  pending
+  
