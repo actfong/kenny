@@ -1,6 +1,6 @@
 ##
 # Module to unsubscribe all Rails default LogSubscribers from their events.
-module A2bLogging
+module Kenny
   module Unsubscriber
     DEFAULT_RAILS_LOG_SUBSCRIBER_CLASSES = [
       ActionView::LogSubscriber, 
@@ -19,7 +19,7 @@ module A2bLogging
     # 
     # It would be safer to write your chosen instrumentation data to a separate file,
     # setup by the [:logger] configuration (see Readme). In that case, the [:unsubscribe_rails_defaults]
-    # field in A2bLogging's config won't need to be set.
+    # field in Kenny's config won't need to be set.
     def self.unsubscribe_from_rails_defaults
       default_rails_log_subscribers.each do |subscriber|
         subscribed_events_for(subscriber).each do |event|

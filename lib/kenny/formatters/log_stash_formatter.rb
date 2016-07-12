@@ -2,7 +2,7 @@ require 'logger'
 require 'logstash-event'
 require 'active_support'
 
-module A2bLogging
+module Kenny
   module Formatters
     class LogStashFormatter < ::Logger::Formatter
 
