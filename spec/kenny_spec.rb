@@ -7,9 +7,9 @@ describe Kenny do
     double(kenny: dummy_kenny_configs)
   end
 
-  let(:application_without_kenny){double(config: app_config_without_kenny)}  
+  let(:application_without_kenny){double(config: app_config_without_kenny)}
   let(:app_config_without_kenny) do
-    double(kenny: {})
+    double(kenny: Kenny.configs)
   end
 
   describe ".attach_to_instrumentations" do
@@ -22,7 +22,7 @@ describe Kenny do
       it "adds an LogSubscriber" do
         expect{ subject.attach_to_instrumentations }.to change{
           ActiveSupport::LogSubscriber.log_subscribers.count
-        }.by 1        
+        }.by 1
       end
 
       it "the added LogSubscriber is inherited from Kenny::LogSubscriber" do
@@ -44,7 +44,7 @@ describe Kenny do
 
         added_log_subscriber = (log_subscribers_after - log_subscribers_before).first
 
-        instrumentation = Kenny.application.config.kenny[:instrumentations].first[:name]        
+        instrumentation = Kenny.application.config.kenny[:instrumentations].first[:name]
         listener = ActiveSupport::Notifications.notifier.listeners_for(instrumentation)[-1]
 
         expect(added_log_subscriber).to eq listener.instance_variable_get(:@delegate)
@@ -66,7 +66,7 @@ describe Kenny do
         cloned_configs = dummy_kenny_configs.clone
         cloned_configs[:instrumentations].first.delete(:logger)
         app = mock_application_with(cloned_configs)
-        Kenny.application = app        
+        Kenny.application = app
       end
 
       it "won't assign a logger" do
@@ -84,8 +84,8 @@ describe Kenny do
         Kenny.application = application_without_kenny
       end
 
-      it "won't add extra LogSubscribers" do  
-        expect{ 
+      it "won't add extra LogSubscribers" do
+        expect{
           subject.attach_to_instrumentations
         }.not_to change{
           ActiveSupport::LogSubscriber.log_subscribers
@@ -114,7 +114,7 @@ describe Kenny do
       it "does not invoke Kenny::Unsubscriber.unsubscribe_from_rails_defaults" do
         expect(Kenny::Unsubscriber).not_to receive(:unsubscribe_from_rails_defaults)
         subject.unsubscribe_from_rails_defaults
-      end      
+      end
     end
   end
 end

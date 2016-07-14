@@ -7,9 +7,9 @@ def dummy_kenny_configs
   log_stash_formatter = Kenny::Formatters::LogStashFormatter.new
   request_logger.formatter = log_stash_formatter
 
-  ActiveSupport::OrderedOptions.new.tap do |kenny_config|
-    kenny_config.unsubscribe_rails_defaults = true
-    kenny_config.instrumentations = [ 
+  Kenny.configs.tap do |conf|
+    conf.unsubscribe_rails_defaults = true
+    conf.instrumentations = [
       { name: 'process_action.action_controller',
         block: lambda do |event|
           data = DataBuilders::RequestsData.build(event)

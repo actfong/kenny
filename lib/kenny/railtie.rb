@@ -6,17 +6,13 @@ require 'action_mailer/log_subscriber'
 
 module Kenny
   class Railtie < Rails::Railtie
-    config.kenny = Struct.new(
-      :unsubscribe_rails_defaults, 
-      :suppress_rack_logger, 
-      :instrumentations
-    ).new
+    config.kenny = Kenny.configs
 
     config.after_initialize do |app|
       Kenny.application = app
 
       # Define anonymous classes that inherit from ActiveSupport::LogSubscriber.
-      # Within that anonymous class, define methods that 
+      # Within that anonymous class, define methods that
       # perform the user-defined actions when that instrumentation occurs.
       # If desired, user can define a specific logger for the specified instrumentation.
       Kenny.attach_to_instrumentations
