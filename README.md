@@ -1,14 +1,18 @@
 # Kenny
 Inspired by [lograge](https://github.com/roidrage/lograge), but without the rage.
 
-Lograge does a great job in suppressing Rails' log output, but it does so by overriding Rails' default behaviour for instrumentations/subscriptions, as well as having a say on the content of the log messages.
+Lograge does a great job in suppressing Rails' log output, it does so by:
+- overriding Rails' default behaviour for instrumentations/subscriptions
+- being very opinionated, hence removing a lot of data from your log.
+
+As a result, even though Lograge is great for cleaning your production.log, it is neither meant for collecting metrics nor great for plugging into any instrumentation event that you want.
 
 Kenny attempts to leave implementations to the user and provide a more modular way to monitor instrumentation events.
-It allows the user to decide: 
+It allows the user to decide:
 - which instrumentations to monitor
 - what to do when the specified instrumentation-event occurs
-- where to log the data to (or no logging to file at all, it's all up to you)
-- whether or not to remove Rails' default instrumentation monitoring (although not recommended)
+- where to log the data to (or no logging to file at all)
+- whether or not to unsubscribe from Rails' default instrumentations (although not recommended)
 
 Best to be explained with an example.
 
@@ -29,13 +33,15 @@ Or command line:
     $ gem install kenny
 
 ## Usage
-  Kenny can be configured through an initializer (`config/initializers/kenny.rb`) or within the configuration file of your environment `development|test|staging|production.rb`. 
+  Kenny can be configured through an initializer (`config/initializers/kenny.rb`) or within the configuration file of your environment `development|test|staging|production.rb`.
   This depends on whether you want to same or different behaviour accross environments.
+
+  If you do configure Kenny through an initializer, then it would give you the advantage of keeping all your instrumentation configurations in one place.
 
   Here is an example, its details will be explained in the following paragraphs.
 
   ```ruby
-  # Example  
+  # Example
   MyApp::Application.configure do
     # Define a logger-instance with formatter to be used later
     request_logger = ActiveSupport::Logger.new( File.join(Rails.root, "log", "process_action.log") )
@@ -44,7 +50,7 @@ Or command line:
 
     config.kenny.unsubscribe_rails_defaults = false
     config.kenny.suppress_rack_logger = true
-    config.kenny.instrumentations = [ 
+    config.kenny.instrumentations = [
       { name: 'process_action.action_controller',
         block: lambda do |event|
           data = MyDataBuilder.build(event)
@@ -55,8 +61,8 @@ Or command line:
       { name: 'sql.active_record',
         block: lambda do |event|
           data = event.payload
-          Rails.logger.info("#{event.name}: #{data}") 
-        end 
+          Rails.logger.info("#{event.name}: #{data}")
+        end
       }
     ]
 
@@ -69,8 +75,8 @@ Or command line:
   Before proceeding, have a look at [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) and [LogSubscriber](http://api.rubyonrails.org/classes/ActiveSupport/LogSubscriber.html)
 
   The `kenny.instrumentations` configuration takes an array of hashes. Each hash represents an instrumentation-event that you want to subscribe to.
-  
-  Each of these hashes requires a `:name` (name of instrumentation event), a `:block` (what to do when that event occurs) and optionally a `:logger` (which logger to use in order to write these events to a file).
+
+  Each of these hashes requires a `:name` (name of instrumentation event), a `:block` (what to do when that event occurs) and *optionally* a `:logger` (which logger to use in order to write these events to a file).
 
   In the example above, we setup Kenny to monitor two instrumentation events, `process_action.action_controller` and `sql.active_record`.
 
@@ -80,20 +86,21 @@ Or command line:
 
   The first one gets method `def process_action` defined and `def logger` *redefined*.
 
-  The body of `def process_action` is the `:block` that has been supplied to the configuration. 
-  Hence `:block` must be a Lambda or a Proc. 
+  The body of `def process_action` is the `:block` that has been supplied to the configuration.
+  Hence `:block` must be a Lambda or a Proc.
   (Lambda will raise errors with wrong number of arguments, Proc won't)
-  
-  The `def logger` method (in ActiveSupport::LogSubscriber) gets overridden and will return the logger-instance that you have provided to the configuration. (In this case, its the `request_logger` that you have defined at the top of your config). 
+
+  The `def logger` method (in ActiveSupport::LogSubscriber) gets overridden and will return the logger-instance that you have provided to the configuration. (In this case, its the `request_logger` that you have defined at the top of your config).
 
   This class is then attached to :action_controller, by looking up the event-name 'process_action.action_controller'
 
-  The idea of redefining `def logger` may sound a bit scary, but this is necessary to keep events from 
+  The idea of redefining `def logger` may sound a bit scary, but this is necessary to keep events from
   different instrumentation channels on different log files. If `:logger` option is not provided, then that LogSubscriber class will use the default Rails logger (and hence writing to your production.log etc)
 
-  The second LogSubscriber class will have method `def start_processing` defined and the method body is again what has been supplied in the :block configuration. 
+  The second LogSubscriber class will have method `def start_processing` defined and the method body is again what has been supplied in the :block configuration.
 
   The difference is that `:logger` has not been provided, hence it won't override the logger method for this LogSubscriber. In Rails, this means it will fall back to the default `Rails.logger`.
+  Mind you that even though a LogSubscriber has access to a logger, it does not mean you have to use it! There is nothing wrong with subscribing to an event and not log its data to file at all! There are other things you could do with this data.
   At the end, this class gets attached to :active_record, by looking up the event-name 'sql.active_record'
 
 #### Be careful with variable scopes and lambdas
@@ -109,14 +116,14 @@ Or command line:
     { name: 'sql.active_record',
       block: lambda do |event|
         data = event.payload
-        logger.info("#{event.name}: #{data}") 
-      end 
+        logger.info("#{event.name}: #{data}")
+      end
     }
   ]
-  ``` 
+  ```
 
-  You might think that since no `:logger` option has been provided, for 'sql.active_record' events, the default logger will be used..... But that is not true. 
-  Since `logger` is within scope at the time when the lambda was defined, this instance of ActiveSupport::Logger will be used to invoke `#info` when 'sql.active_record' occurs.
+  You might think that since no `:logger` option has been provided, for 'sql.active_record' events, the default logger will be used..... But that is not true.
+  Since `logger` is within scope at the time when the lambda was defined, this instance of ActiveSupport::Logger will be used to invoke `#info` when 'sql.active_record' occurs. So just avoid creating a local variables that have the same name as variables in your block.
 
 
 ### `kenny.unsubscribe_rails_defaults` configuration
@@ -157,14 +164,14 @@ Or command line:
            # Use Fluent to send data to another server
           Fluent::Logger::FluentLogger.open(nil, :host=>MY_SERVER, :port=>24224)
           Fluent::Logger.post('web_requests', data)
-        end 
+        end
       },
       { name: 'sql.active_record',
         block: lambda do |event|
           data = MyDataBuilder.build(event)
-          # Do something asynchronously
-          Something.async.processdata(data)
-        end 
+          # Do something asynchronously, maybe send to an external service
+          Something.async.process_and_forward(data)
+        end
       }
     ]
   ```
