@@ -1,5 +1,5 @@
 # Kenny
-Inspired by [lograge](https://github.com/roidrage/lograge), but without the rage.
+Inspired by [lograge](https://github.com/roidrage/lograge), but without the rage. And logs are optional.
 
 Lograge does a great job in suppressing Rails' log output, it does so by:
 - overriding Rails' default behaviour for instrumentations/subscriptions
@@ -13,6 +13,8 @@ It allows the user to decide:
 - what to do when the specified instrumentation-event occurs
 - where to log the data to (or no logging to file at all)
 - whether or not to unsubscribe from Rails' default instrumentations (although not recommended)
+
+Apart from that, it was also created with the idea of keeping all subscribed events in one place. So it will keep your code clean and provide a nice overview of all event-triggered actions.
 
 Best to be explained with an example.
 
@@ -74,13 +76,13 @@ Or command line:
 ### `kenny.instrumentations` configuration
   Before proceeding, have a look at [Active Support Instrumentation](http://edgeguides.rubyonrails.org/active_support_instrumentation.html) and [LogSubscriber](http://api.rubyonrails.org/classes/ActiveSupport/LogSubscriber.html)
 
-  The `kenny.instrumentations` configuration takes an array of hashes. Each hash represents an instrumentation-event that you want to subscribe to.
+  The `kenny.instrumentations` configuration takes an array of hashes. Each hash represents a Rails instrumentation-event that you want to subscribe to.
 
   Each of these hashes requires a `:name` (name of instrumentation event), a `:block` (what to do when that event occurs) and *optionally* a `:logger` (which logger to use in order to write these events to a file).
 
   In the example above, we setup Kenny to monitor two instrumentation events, `process_action.action_controller` and `sql.active_record`.
 
-  For every instrumentation that you want to monitor, you have to provide a `:name` and a `:block`. `:logger` is optional
+  For every instrumentation that you want to monitor, you have to provide a `:name` and a `:block`. `:logger` is optional.
 
   Behind the scenes, it defines an anonymous class (< ActiveSupport::LogSubscriber), for each of the specified instrumentation.
 
