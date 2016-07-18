@@ -2,8 +2,8 @@
 Gem::Specification.new do |spec|
   spec.name          = "kenny"
   spec.version       = "0.1.0"
-  spec.authors       = ["Mathias Rüdiger"]
-  spec.email         = ["mathias.ruediger@fromatob.com"]
+  spec.authors       = ["Mathias Rüdiger, Alex Fong"]
+  spec.email         = ["mathias.ruediger@fromatob.com, alex.fong@fromatob.com"]
 
   spec.summary       = "Tame Rails logs, add timestamps and make them useable"
   spec.description   = "Tame Rails logs, add timestamps and make them useable. To be used with Logstash"
@@ -19,11 +19,11 @@ Gem::Specification.new do |spec|
   end
 
   spec.files         = Dir["lib/kenny.rb",
-                           "lib/railtie.rb", 
-                           "lib/kenny/**/*.rb", 
-                           "Gemfile", 
-                           "LICENSE", 
-                           "Rakefile", 
+                           "lib/railtie.rb",
+                           "lib/kenny/**/*.rb",
+                           "Gemfile",
+                           "LICENSE",
+                           "Rakefile",
                            "README.md"]
   spec.homepage      = "http://www.fromatob.com"
   spec.bindir        = "exe"
