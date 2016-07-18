@@ -56,7 +56,7 @@ module Kenny
   # Create LogSubscriber-classes which will be attached to the user-specified instrumentations
   # These classes are anonymous, but inherit from Kenny::LogSubscriber to simplify testing
   #
-  # Within these classes, methods (and eventually logger) are defined based on the
+  # Within these classes, methods (and potentially `def logger`) are defined based on the
   # instrumentations-configs provided by the user.
   def self.define_log_subscriber_class(instr_config)
     klass = Class.new(Kenny::LogSubscriber) do |k|
