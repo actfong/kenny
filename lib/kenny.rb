@@ -44,7 +44,7 @@ module Kenny
   end
 
   ##
-  # Suppress Rails Rack::Rack::Logger's output à la
+  # Suppress Rails::Rack::Logger's output à la
   #   Started GET "/my_path" for 10.0.2.2 at 2016-07-12 10:06:48 +0000
   def self.suppress_rack_logger
     if @@application.config.kenny[:suppress_rack_logger]
