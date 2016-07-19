@@ -14,19 +14,19 @@ module Kenny
   end
 
   def self.application=(app)
-    @@application = app
+    @application = app
   end
 
   def self.application
-    @@application
+    @application
   end
 
   ##
   # Define LogSubscriber-classes and Attach to user-specified instrumentations
   # if the configurations have been set.
   def self.attach_to_instrumentations
-    if @@application.config.kenny[:instrumentations]
-      @@application.config.kenny[:instrumentations].each do |instr_config|
+    if @application.config.kenny[:instrumentations]
+      @application.config.kenny[:instrumentations].each do |instr_config|
         define_log_subscriber_class(instr_config)
       end
     end
@@ -37,7 +37,7 @@ module Kenny
   # by delegating to Kenny::Unsubscriber.
   # See http://edgeguides.rubyonrails.org/active_support_instrumentation.html
   def self.unsubscribe_from_rails_defaults
-    if @@application.config.kenny[:unsubscribe_rails_defaults]
+    if @application.config.kenny[:unsubscribe_rails_defaults]
       Kenny::Unsubscriber.unsubscribe_from_rails_defaults
     end
   end
@@ -46,7 +46,7 @@ module Kenny
   # Suppress Rails::Rack::Logger's output like:
   #   Started GET "/my_path" for 10.0.2.2 at 2016-07-12 10:06:48 +0000
   def self.suppress_rack_logger
-    if @@application.config.kenny[:suppress_rack_logger]
+    if @application.config.kenny[:suppress_rack_logger]
       require 'kenny/rails_ext/rack/logger'
     end
   end
