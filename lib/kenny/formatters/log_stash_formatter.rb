@@ -4,8 +4,8 @@ require 'active_support'
 
 module Kenny
   module Formatters
+    # Formats messages as LogStash::Event
     class LogStashFormatter < ::Logger::Formatter
-
       include ActiveSupport::TaggedLogging::Formatter
 
       def call(severity, time, progname, msg)
@@ -16,7 +16,7 @@ module Kenny
 
         tags = current_tags
 
-        if tags.size > 0
+        if tags.any?
           msg['type'] ||= tags.first
           msg['tags'] = tags
         end

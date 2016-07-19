@@ -1,8 +1,8 @@
 #!/usr/bin/env ruby
 
-require "bundler"
+require 'bundler'
 Bundler.require :default, :development
-file = File.expand_path("../../lib/kenny.rb", __FILE__)
+file = File.expand_path('../../lib/kenny.rb', __FILE__)
 require file
 
 Pry.start

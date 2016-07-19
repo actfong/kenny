@@ -5,6 +5,7 @@ require 'active_record/log_subscriber'
 require 'action_mailer/log_subscriber'
 
 module Kenny
+  # Tie to Rails application to access Rails.application.config
   class Railtie < Rails::Railtie
     config.kenny = Kenny.configs
 

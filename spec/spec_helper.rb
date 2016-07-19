@@ -3,14 +3,15 @@ require 'kenny'
 require 'pry'
 
 def dummy_kenny_configs
-  request_logger = ActiveSupport::Logger.new( File.join("requests.test.log") )
+  request_logger = ActiveSupport::Logger.new(File.join('requests.test.log'))
   log_stash_formatter = Kenny::Formatters::LogStashFormatter.new
   request_logger.formatter = log_stash_formatter
 
   Kenny.configs.tap do |conf|
     conf.unsubscribe_rails_defaults = true
     conf.instrumentations = [
-      { name: 'process_action.action_controller',
+      {
+        name: 'process_action.action_controller',
         block: lambda do |event|
           data = DataBuilders::RequestsData.build(event)
           logger.info(data)
