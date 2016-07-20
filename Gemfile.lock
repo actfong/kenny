@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kenny (0.1.1)
+    kenny (0.1.2)
       actionmailer (~> 4.2)
       actionpack (~> 4.2)
       activerecord (~> 4.2)
