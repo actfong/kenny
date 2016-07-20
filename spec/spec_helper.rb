@@ -13,8 +13,8 @@ def dummy_kenny_configs
       {
         name: 'process_action.action_controller',
         block: lambda do |event|
-          data = DataBuilders::RequestsData.build(event)
-          logger.info(data)
+          Date.parse "2016-01-01"
+          logger.info(event.inspect)
         end,
         logger: request_logger
       }
@@ -34,4 +34,16 @@ end
 
 def mock_application_with(configs)
   double(config: double(kenny: configs))
+end
+
+def kenny_log_subscribers_for(event_name)
+  listeners = listeners_for(event_name)
+  delegates = listeners.map do |listener|
+    listener.instance_variable_get :@delegate
+  end
+  delegates.select { |delegate| delegate.class.superclass == Kenny::LogSubscriber }
+end
+
+def listeners_for(event_name)
+  ActiveSupport::Notifications.notifier.listeners_for(event_name)
 end

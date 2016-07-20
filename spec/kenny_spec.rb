@@ -115,4 +115,24 @@ describe Kenny do
       end
     end
   end
+
+  describe 'configurations' do
+
+    before do
+      Kenny.application = application_with_kenny
+      subject.attach_to_instrumentations
+    end
+
+    it 'perform actions that are specified in the instrumentations configs' do
+      require 'action_controller'
+      kenny_count = kenny_log_subscribers_for('process_action.action_controller').select do |ls|
+        ls.patterns.include? 'logger.action_controller'
+      end.count
+
+      # Date.parse was specified in the config for 'process_action.action_controller'
+      expect(Date).to receive(:parse).with('2016-01-01').exactly(kenny_count).times
+
+      ActiveSupport::Notifications.instrument('process_action.action_controller', { foo: 'bar' })
+    end
+  end
 end
