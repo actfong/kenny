@@ -92,30 +92,6 @@ describe Kenny do
     end
   end
 
-  describe '.unsubscribe_from_rails_defaults' do
-    context 'config[:unsubscribe_rails_defaults] is truthy' do
-      before do
-        Kenny.application = application_with_kenny
-      end
-
-      it 'delegates to Kenny::Unsubscriber' do
-        expect(Kenny::Unsubscriber).to receive(:unsubscribe_from_rails_defaults)
-        subject.unsubscribe_from_rails_defaults
-      end
-    end
-
-    context 'config[:unsubscribe_rails_defaults] is not truthy' do
-      before do
-        Kenny.application = application_without_kenny
-      end
-
-      it 'does not invoke Kenny::Unsubscriber.unsubscribe_from_rails_defaults' do
-        expect(Kenny::Unsubscriber).not_to receive(:unsubscribe_from_rails_defaults)
-        subject.unsubscribe_from_rails_defaults
-      end
-    end
-  end
-
   describe 'configurations' do
 
     before do

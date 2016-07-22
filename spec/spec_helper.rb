@@ -8,7 +8,6 @@ def dummy_kenny_configs
   request_logger.formatter = log_stash_formatter
 
   Kenny.configs.tap do |conf|
-    conf.unsubscribe_rails_defaults = true
     conf.instrumentations = [
       {
         name: 'process_action.action_controller',

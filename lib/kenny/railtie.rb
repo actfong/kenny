@@ -17,12 +17,6 @@ module Kenny
       # perform the user-defined actions when that instrumentation occurs.
       # If desired, user can define a specific logger for the specified instrumentation.
       Kenny.attach_to_instrumentations
-
-      # Unsubscribe all default Rails LogSubscribers if demanded
-      Kenny.unsubscribe_from_rails_defaults
-
-      # Suppress Rails::Rack::Logger's output
-      Kenny.suppress_rack_logger
     end
   end
 end
