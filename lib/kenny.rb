@@ -8,7 +8,6 @@ module Kenny
   def self.configs
     Struct.new(
       :unsubscribe_rails_defaults,
-      :suppress_rack_logger,
       :instrumentations
     ).new
   end
@@ -39,15 +38,6 @@ module Kenny
   def self.unsubscribe_from_rails_defaults
     if @application.config.kenny[:unsubscribe_rails_defaults]
       Kenny::Unsubscriber.unsubscribe_from_rails_defaults
-    end
-  end
-
-  ##
-  # Suppress Rails::Rack::Logger's output like:
-  #   Started GET "/my_path" for 10.0.2.2 at 2016-07-12 10:06:48 +0000
-  def self.suppress_rack_logger
-    if @application.config.kenny[:suppress_rack_logger]
-      require 'kenny/rails_ext/rack/logger'
     end
   end
 

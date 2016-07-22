@@ -51,7 +51,6 @@ Or command line:
     request_logger.formatter = log_stash_formatter
 
     config.kenny.unsubscribe_rails_defaults = false
-    config.kenny.suppress_rack_logger = true
     config.kenny.instrumentations = [
       { name: 'process_action.action_controller',
         block: lambda do |event|
@@ -139,18 +138,6 @@ Or command line:
   ```
 
   By doing so, your `development|test|staging|production.log` will not have any of the default log messages. This is not an approach I would recommend, unless you are desperate to have all messages from your specified instrumentation events all logged into one `development|test|staging|production.log`.
-
-
-### `kenny.suppress_rack_logger` configuration
-  By default, your rails app logs messages like these to your environment's log:
-
-  ```
-  Started GET "/my_path" for 10.0.2.2 at 2016-07-12 10:06:48 +0000
-  Started GET "/assets/sh/my_styles.css?body=1" for 10.0.2.2 at 2016-07-12 10:06:49 +0000
-  ```
-
-  You can suppress these messages by setting kenny.suppress_rack_logger to true.
-  This setting will not have any effects on the log files that you create separately with the `:logger` option within your specified instrumentation.
 
 ## Open-to-Implementation approach
   As you might have seen from the example, the `:block` allows you to define your own implementation.
