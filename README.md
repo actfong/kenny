@@ -12,7 +12,6 @@ It allows the user to decide:
 - which instrumentations to monitor
 - what to do when the specified instrumentation event occurs
 - where to log the data to (or no logging to file at all)
-- whether or not to unsubscribe from Rails' default instrumentations (although not recommended)
 
 Apart from that, it was also created with the idea of keeping all subscribed events in one place. So it will keep your code clean and provide a nice overview of all event-triggered actions.
 
@@ -50,7 +49,6 @@ Or command line:
     log_stash_formatter = Kenny::Formatters::LogStashFormatter.new
     request_logger.formatter = log_stash_formatter
 
-    config.kenny.unsubscribe_rails_defaults = false
     config.kenny.instrumentations = [
       { name: 'process_action.action_controller',
         block: lambda do |event|
@@ -123,21 +121,6 @@ Or command line:
 
   You might think that since no `:logger` option has been provided for 'sql.active_record' events, the default logger will be used..... But that is not true.
   Since `logger` is within scope at the time when the lambda was defined, this instance of ActiveSupport::Logger will be used to invoke `#info` when 'sql.active_record' occurs. So just avoid creating a local variable that have the same name as variables in your block.
-
-
-### `kenny.unsubscribe_rails_defaults` configuration
-  Kenny can also used to unsubscribe all Rails LogSubscribers from their subscribed instrumentation events.
-  You can do that by setting `:unsubscribe_rails_defaults` to true:
-
-  ``` Ruby
-  config.kenny.unsubscribe_rails_defaults = true
-  config.kenny.instrumentations = [{
-      # your stuff
-    }]
-  }
-  ```
-
-  By doing so, your `development|test|staging|production.log` will not have any of the default log messages. This is not an approach I would recommend, unless you are desperate to have all messages from your specified instrumentation events all logged into one `development|test|staging|production.log`.
 
 ## Open-to-Implementation approach
   As you might have seen from the example, the `:block` allows you to define your own implementation.

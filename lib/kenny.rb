@@ -1,13 +1,11 @@
 ##
 
-# Kenny module does three things:
+# Kenny module does two things:
 # - Holds reference to the Rails application (set through Railtie)
-# - Unsubscribe all Rails' LogSubscribers from the default instrumentation channels
 # - Create LogSubscriber-classes which will be attached to the user-specified instrumentations
 module Kenny
   def self.configs
     Struct.new(
-      :unsubscribe_rails_defaults,
       :instrumentations
     ).new
   end
@@ -28,16 +26,6 @@ module Kenny
       @application.config.kenny[:instrumentations].each do |instr_config|
         define_log_subscriber_class(instr_config)
       end
-    end
-  end
-
-  ##
-  # Unsubscribe all Rails' default LogSubscribers from the default Rails instrumentations,
-  # by delegating to Kenny::Unsubscriber.
-  # See http://edgeguides.rubyonrails.org/active_support_instrumentation.html
-  def self.unsubscribe_from_rails_defaults
-    if @application.config.kenny[:unsubscribe_rails_defaults]
-      Kenny::Unsubscriber.unsubscribe_from_rails_defaults
     end
   end
 
@@ -67,5 +55,4 @@ end
 require 'kenny/railtie'
 
 require 'kenny/formatters/log_stash_formatter'
-require 'kenny/unsubscriber'
 require 'kenny/log_subscriber'
