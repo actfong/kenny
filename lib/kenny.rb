@@ -5,9 +5,7 @@
 # - Create LogSubscriber-classes which will be attached to the user-specified instrumentations
 module Kenny
   def self.configs
-    Struct.new(
-      :instrumentations
-    ).new
+    Struct.new(:instrumentations).new
   end
 
   def self.application=(app)
