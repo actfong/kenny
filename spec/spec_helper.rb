@@ -12,7 +12,7 @@ def dummy_kenny_configs
       {
         name: 'process_action.action_controller',
         block: lambda do |event|
-          Date.parse "2016-01-01"
+          Date.parse '2016-01-01'
           logger.info(event.inspect)
         end,
         logger: request_logger
