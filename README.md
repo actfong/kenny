@@ -156,3 +156,6 @@ Or command line:
 ## Release Notes
   *Version 0.1.4*: LogStashFormatter can take a `type` attribute through the logger's progname. If that is nil, it falls back to the message-hash's `['type']`. If they are all nil, then `type` can still be set through FileBeat's config.
 
+## License
+
+See the [LICENSE](LICENSE.md) file for license rights and limitations (MIT).
