@@ -1,4 +1,7 @@
 # Kenny
+
+[![Code Climate](https://codeclimate.com/github/fromAtoB/kenny/badges/gpa.svg)](https://codeclimate.com/github/fromAtoB/kenny)
+
 Inspired by [lograge](https://github.com/roidrage/lograge), but without the rage. And logs are optional.
 
 Lograge does a great job in suppressing Rails' log output, it does so by:
