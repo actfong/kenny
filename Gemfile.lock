@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    kenny (0.1.4)
+    kenny (0.1.5)
       actionmailer (~> 4.2)
       actionpack (~> 4.2)
       activerecord (~> 4.2)
@@ -136,4 +136,4 @@ DEPENDENCIES
   rubocop (~> 0.41)
 
 BUNDLED WITH
-   1.12.5
+   1.13.6

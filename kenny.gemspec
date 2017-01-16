@@ -1,9 +1,9 @@
 # coding: utf-8
 Gem::Specification.new do |spec|
   spec.name = 'kenny'
-  spec.version = '0.1.4'
-  spec.authors = ['Mathias Rüdiger', 'Alex Fong']
-  spec.email = ['mathias.ruediger@fromatob.com', 'alex.fong@fromatob.com']
+  spec.version = '0.1.5'
+  spec.authors = ['Mathias Rüdiger', 'Alex Fong', 'Jiri Kratochvil']
+  spec.email = ['mathias.ruediger@fromatob.com', 'alex.fong@fromatob.com', 'jiri.kratochvil@fromatob.com']
 
   spec.summary = 'Monitor and act upon Rails instrumentation events.'
   spec.description = 'One-stop destination for defining you actions' \
