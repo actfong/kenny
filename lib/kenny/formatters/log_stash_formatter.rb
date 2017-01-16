@@ -20,7 +20,13 @@ module Kenny
 
         event = LogStash::Event.new(msg)
 
-        "%s\n" % event.to_json
+        "%s\n" % clean_json!(event.to_json)
+      end
+
+      private
+
+      def clean_json!(json_string)
+        json_string.gsub(/\\u([0-9a-z]{4})/) { [$1.to_i(16)].pack('U') }
       end
     end
   end
