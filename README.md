@@ -169,7 +169,7 @@ Or command line:
 
   Run a shell session:
   ```sh
-    docker run --rm -it kenny sh
+    docker run --rm -it -v $(pwd):/app kenny sh
   ```
 
 ## Release Notes
