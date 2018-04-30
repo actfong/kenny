@@ -8,6 +8,17 @@ RSpec.describe Kenny::Formatters::LogStashFormatter do
     let(:strio) { StringIO.new }
     let(:logger) { ActiveSupport::Logger.new(strio) }
 
+    describe 'rails_env' do
+      before do
+        logger.formatter = Kenny::Formatters::LogStashFormatter.new
+        logger.info 'hello world'
+      end
+
+      it 'adds the rails env to all the logs' do
+        expect(subject['rails_env']).to eq 'test'
+      end
+    end
+
     context 'progname not set in logger' do
       before do
         logger.formatter = Kenny::Formatters::LogStashFormatter.new

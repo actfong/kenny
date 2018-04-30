@@ -17,6 +17,7 @@ module Kenny
         msg = { 'message' => msg.is_a?(String) ? msg : msg.inspect } unless msg.is_a?(Hash)
         msg['severity'] = severity if severity
         msg['type'] = progname if progname
+        msg['rails_env'] = Rails.env.to_sym
 
         event = LogStash::Event.new(msg)
 
