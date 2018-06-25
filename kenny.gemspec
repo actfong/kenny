@@ -27,10 +27,10 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rubocop', '~> 0.41'
   spec.add_development_dependency 'appraisal', '~> 2.2'
 
-  spec.add_runtime_dependency 'actionpack', '~> 4.2'
-  spec.add_runtime_dependency 'activerecord', '~> 4.2'
-  spec.add_runtime_dependency 'actionmailer', '~> 4.2'
-  spec.add_runtime_dependency 'activesupport', '~> 4.2'
-  spec.add_runtime_dependency 'railties',      '~> 4.2'
+  spec.add_runtime_dependency 'actionpack',     '>= 4.2.0', '< 6.0'
+  spec.add_runtime_dependency 'activerecord',   '>= 4.2.0', '< 6.0'
+  spec.add_runtime_dependency 'actionmailer',   '>= 4.2.0', '< 6.0'
+  spec.add_runtime_dependency 'activesupport',  '>= 4.2.0', '< 6.0'
+  spec.add_runtime_dependency 'railties',       '>= 4.2.0', '< 6.0'
   spec.add_runtime_dependency 'logstash-event', '~> 1.2.02'
 end
