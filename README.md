@@ -158,6 +158,7 @@ Or command line:
   Currently, it only comes with a LogStashFormatter, but feel free to add more Formatters to make this project great.
 
 ## Release Notes
+  *Version 0.1.5*: Compatible with Rails 5.x series.
   *Version 0.1.4*: LogStashFormatter can take a `type` attribute through the logger's progname. If that is nil, it falls back to the message-hash's `['type']`. If they are all nil, then `type` can still be set through FileBeat's config.
 
 ## License
