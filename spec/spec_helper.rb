@@ -1,5 +1,4 @@
 require 'kenny'
-
 require 'pry'
 
 def dummy_kenny_configs
