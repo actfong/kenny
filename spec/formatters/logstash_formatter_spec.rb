@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'active_support'
 
 RSpec.describe Kenny::Formatters::LogStashFormatter do
   describe 'the json output' do

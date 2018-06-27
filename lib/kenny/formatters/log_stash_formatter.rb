@@ -1,6 +1,5 @@
 require 'logger'
 require 'logstash-event'
-require 'active_support'
 
 module Kenny
   module Formatters

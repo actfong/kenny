@@ -3,6 +3,8 @@
 /_yardoc/
 /coverage/
 /doc/
+/gemfiles/*.gemfile.lock
+/gemfiles/.bundle
 /pkg/
 /spec/reports/
 /tmp/
