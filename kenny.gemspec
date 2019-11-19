@@ -24,7 +24,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 10.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'pry', '~> 0.10'
-  spec.add_development_dependency 'rubocop', '~> 0.41'
+  spec.add_development_dependency 'rubocop', '~> 0.49'
   spec.add_development_dependency 'appraisal', '~> 2.2'
 
   spec.add_runtime_dependency 'actionpack',     '>= 4.2.0', '< 6.0'
