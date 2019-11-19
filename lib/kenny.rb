@@ -54,3 +54,4 @@ require 'kenny/railtie'
 
 require 'kenny/formatters/log_stash_formatter'
 require 'kenny/log_subscriber'
+require 'kenny/logger'
